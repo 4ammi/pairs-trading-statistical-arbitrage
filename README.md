@@ -14,7 +14,7 @@ This strategy identifies temporary price divergences between two historically co
 
 ---
 
-## 📐 Mathematical Framework & Strategy Logic
+## Mathematical Framework & Strategy Logic
 
 1. **Hedge Ratio Calculation (OLS Regression):**
    We estimate the equilibrium relationship between the two stock prices using Ordinary Least Squares (OLS):
@@ -49,7 +49,7 @@ This strategy identifies temporary price divergences between two historically co
 
 ---
 
-## 🚀 Future Improvements
+## Future Improvements
 To eliminate look-ahead bias and improve risk-adjusted performance:
 1. **Dynamic Beta:** Implement **Rolling OLS** or a **Kalman Filter** to adaptively update the hedge ratio over time.
 2. **Stop-Loss Risk Management:** Introduce maximum holding periods and Z-score stop-loss thresholds to mitigate regime-shift losses.
