@@ -3,11 +3,12 @@
 A quantitative finance project implementing a Mean-Reversion Pairs Trading strategy on Coca-Cola (`KO`) and PepsiCo (`PEP`) stock prices using 5-year historical data (2020–2025).
 
 ## Executive Summary
-This strategy identifies temporary price divergences between two historically cointegrated assets and exploits mean-reverting behavior via statistical arbitrage. 
+This strategy identifies temporary price divergences between two historically cointegrated (not yet tested) assets and exploits mean-reverting behavior via statistical arbitrage. 
 
 - **Asset Pair:** Coca-Cola (`KO`) & PepsiCo (`PEP`)
 - **Period:** 2020 - 2025 (Daily Data via Yahoo Finance)
 - **Core Concept:** OLS Regression, Spread Construction, Z-Score Thresholds
+### Preliminary result, before bias correction:
 - **Optimized Strategy Return:** **+23.08%**
 - **Sharpe Ratio:** **0.50**
 - **Max Drawdown:** **-16.65%**
