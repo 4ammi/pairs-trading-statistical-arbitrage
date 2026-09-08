@@ -1,64 +1,35 @@
-# Statistical Arbitrage: Pairs Trading Strategy (KO & PEP)
+# Pairs Trading: Cointegration and Statistical Arbitrage (KO/PEP)
 
-A quantitative finance project implementing a Mean-Reversion Pairs Trading strategy on Coca-Cola (`KO`) and PepsiCo (`PEP`) stock prices using 5-year historical data (2020–2025).
+A coursework project testing whether a classic mean-reversion pairs trading strategy holds up once look-ahead bias, transaction costs, and multiple-testing are handled properly.
 
-## Executive Summary
-This strategy identifies temporary price divergences between two historically cointegrated (not yet tested) assets and exploits mean-reverting behavior via statistical arbitrage. 
+## Background
 
-- **Asset Pair:** Coca-Cola (`KO`) & PepsiCo (`PEP`)
-- **Period:** 2020 - 2025 (Daily Data via Yahoo Finance)
-- **Core Concept:** OLS Regression, Spread Construction, Z-Score Thresholds
-### Preliminary result, before bias correction:
-- **Optimized Strategy Return:** **+23.08%**
-- **Sharpe Ratio:** **0.50**
-- **Max Drawdown:** **-16.65%**
+The first version of this project (see commit history) showed a promising +23% return on Coca-Cola / PepsiCo. It turned out to be an artifact of using full-sample statistics — the hedge ratio, mean, and standard deviation were all computed with knowledge of future prices. Once that's fixed, the picture changes completely.
 
----
+## What's here
 
-## Mathematical Framework & Strategy Logic
+- OLS-based hedge ratio and spread construction on log prices
+- Rolling 252-day beta and rolling 60-day z-score (instead of one fixed estimate for the whole period)
+- A state machine for entries and exits: enter at |z| > 2, exit on return to ±0.5, stop-loss at |z| > 4, time-stop at 60 days
+- Transaction costs modeled on turnover, with a sensitivity table across 0–20bps
+- An intra-sector screen across 23 tickers (Consumer Staples, Banks, Tech Hardware) and 84 pairs, formation period 2015–2019, with a check against how many pairs would pass by chance alone
+- Out-of-sample test (2020–2026) of the top screened candidates
 
-1. **Hedge Ratio Calculation (OLS Regression):**
-   We estimate the equilibrium relationship between the two stock prices using Ordinary Least Squares (OLS):
-   $$\text{Price}_{KO} = \alpha + \beta \times \text{Price}_{PEP} + \epsilon$$
-   *Calculated Hedge Ratio ($\beta$):* **0.2989**
+## Result
 
-2. **Spread Construction:**
-   $$\text{Spread}_t = \text{Price}_{KO, t} - \beta \times \text{Price}_{PEP, t}$$
+No combination — the original KO/PEP pair or the pairs found through screening — produces a Sharpe ratio suggesting a tradeable edge after costs. KO/PEP nets -16.9% over the period; the best of the screened banking pairs is roughly flat. Even pairs that screened better than chance alone in-sample (12 of 84 vs ~4 expected) failed to hold up out-of-sample.
 
-3. **Z-Score Normalization:**
-   To systematically generate trade signals, the spread is normalized into a Z-Score:
-   $$Z_t = \frac{\text{Spread}_t - \mu_{spread}}{\sigma_{spread}}$$
+This lines up with what's been published on the topic — Do & Faff (2010, 2012) found that daily-frequency pairs trading profitability in US equities mostly disappeared after the early 2000s. A negative, well-diagnosed result here is worth more than a positive one that doesn't survive scrutiny.
 
-4. **Trading Signals:**
-   - **$Z_t > +1.0$ (Overvalued KO):** Short KO, Long $\beta$ amount of PEP.
-   - **$Z_t < -1.0$ (Undervalued KO):** Long KO, Short $\beta$ amount of PEP.
-   - **$Z_t = 0$:** Exit position (Spread reverted to mean).
+## Known limitations
+
+- Only three sectors and 23 tickers were screened — a larger universe might turn up something this one didn't
+- The state-machine exit rule performs worse than a simpler "re-evaluate signal daily" version on this data; the notebook digs into why, but it's not fully resolved
+- No Bonferroni/Benjamini-Hochberg correction is applied formally to the screen, only compared against the naive expected-by-chance count
+
+## Running it
+
+Everything is in `cointegrated_pairs_trading.ipynb`. Needs `pandas`, `numpy`, `statsmodels`, `yfinance`, `matplotlib`. Data is pulled live from Yahoo Finance, so exact numbers will drift slightly over time as adjusted closes get revised.
 
 ---
-
-## Performance & Sensitivity Analysis
-
-| Metric | Conservative Strategy ($Z = \pm 2.0$) | Optimized Strategy ($Z = \pm 1.0$) |
-| :--- | :--- | :--- |
-| **Total Cumulative Return** | +0.72% | **+23.08%** |
-| **Sharpe Ratio** | N/A (Low frequency) | **0.50** |
-| **Max Drawdown** | Low | **-16.65%** |
-
-### Key Takeaways & Quantitative Insights:
-- **Threshold Sensitivity:** The conservative threshold ($Z = 2.0$) generated very few trades on an efficient large-cap pair. Lowering the entry signal to $Z = 1.0$ captured higher transaction frequencies, yielding +23.08% overall growth.
-- **Drawdown Analysis:** The drawdown experienced in late 2024 / 2025 highlights the risk of **static beta estimation** when market regimes shift (cointegration structural breakdown).
-
----
-
-## Future Improvements
-To eliminate look-ahead bias and improve risk-adjusted performance:
-1. **Dynamic Beta:** Implement **Rolling OLS** or a **Kalman Filter** to adaptively update the hedge ratio over time.
-2. **Stop-Loss Risk Management:** Introduce maximum holding periods and Z-score stop-loss thresholds to mitigate regime-shift losses.
-3. **Transaction Costs:** Incorporate realistic bid-ask spreads and slippage into the backtest framework.
-
----
-
-## Tech Stack & Dependencies
-- **Language:** Python
-- **Libraries:** `pandas`, `numpy`, `statsmodels`, `yfinance`, `matplotlib`
-> **first time writing something and uploading it to GitHub. Hope there will be more in the future**
+First real git/GitHub project — earlier commits are rougher than the later ones, and that's on purpose left visible rather than cleaned up.
