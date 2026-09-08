@@ -1,6 +1,6 @@
 # Pairs Trading: Cointegration and Statistical Arbitrage (KO/PEP)
 
-A coursework project testing whether a classic mean-reversion pairs trading strategy holds up once look-ahead bias, transaction costs, and multiple-testing are handled properly.
+A pet project testing whether a classic mean-reversion pairs trading strategy holds up once look-ahead bias, transaction costs, and multiple-testing are handled properly.
 
 ## Background
 
@@ -17,9 +17,9 @@ The first version of this project (see commit history) showed a promising +23% r
 
 ## Result
 
-No combination — the original KO/PEP pair or the pairs found through screening — produces a Sharpe ratio suggesting a tradeable edge after costs. KO/PEP nets -16.9% over the period; the best of the screened banking pairs is roughly flat. Even pairs that screened better than chance alone in-sample (12 of 84 vs ~4 expected) failed to hold up out-of-sample.
+No combination - the original KO/PEP pair or the pairs found through screening — produces a Sharpe ratio suggesting a tradeable edge after costs. KO/PEP nets -16.9% over the period; the best of the screened banking pairs is roughly flat. Even pairs that screened better than chance alone in-sample (12 of 84 vs ~4 expected) failed to hold up out-of-sample.
 
-This lines up with what's been published on the topic — Do & Faff (2010, 2012) found that daily-frequency pairs trading profitability in US equities mostly disappeared after the early 2000s. A negative, well-diagnosed result here is worth more than a positive one that doesn't survive scrutiny.
+This lines up with what's been published on the topic — Do & Faff (2010, 2012) found that daily-frequency pairs trading profitability in US equities mostly disappeared after the early 2000s.
 
 ## Known limitations
 
@@ -30,6 +30,10 @@ This lines up with what's been published on the topic — Do & Faff (2010, 2012)
 ## Running it
 
 Everything is in `cointegrated_pairs_trading.ipynb`. Needs `pandas`, `numpy`, `statsmodels`, `yfinance`, `matplotlib`. Data is pulled live from Yahoo Finance, so exact numbers will drift slightly over time as adjusted closes get revised.
+
+## References
+Do, B., & Faff, R. (2010). Does Simple Pairs Trading Still Work? *Financial Analysts Journal*, 66(4), 83–95.
+Do, B., & Faff, R. (2012). Are Pairs Trading Profits Robust to Trading Costs? *Journal of Financial Research*, 35(2), 261–287.
 
 ---
 First real git/GitHub project — earlier commits are rougher than the later ones, and that's on purpose left visible rather than cleaned up.
